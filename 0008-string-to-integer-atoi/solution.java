@@ -1,43 +1,28 @@
 class Solution {
     public int myAtoi(String s) {
-        String str = s.trim();
-        if (str.isEmpty()) {
-            return 0;
+        int INT_MAX = 2147483647, INT_MIN = -2147483648;
+        int i = 0, n = s.length(), sign = 1, result = 0;
+        
+        // Step 1: Skip leading whitespace
+        while (i < n && s.charAt(i) == ' ') i++;
+        
+        // Step 2: Check for optional sign
+        if (i < n && (s.charAt(i) == '-' || s.charAt(i) == '+')) {
+            sign = s.charAt(i) == '-' ? -1 : 1;
+            i++;
         }
-
-        String ans = "";
-        int sign = 1;
-        if (str.charAt(0) == '-' || str.charAt(0) == '+') {
-            ans += str.charAt(0);
-            sign = str.charAt(0) == '-' ? -1 : 1;
-        }
-
-        for (int i = (str.charAt(0) == '-' || str.charAt(0) == '+') ? 1 : 0; i < str.length(); i++) {
-            if (Character.isDigit(str.charAt(i))) {
-                ans += str.charAt(i);
-            } else {
-                break;
+        
+        // Step 3: Convert digits to integer
+        while (i < n && Character.isDigit(s.charAt(i))) {
+            int digit = s.charAt(i) - '0';
+            // Check for overflow
+            if (result > (INT_MAX - digit) / 10) {
+                return sign == 1 ? INT_MAX : INT_MIN;
             }
+            result = result * 10 + digit;
+            i++;
         }
-
-        if (ans.length() == 0 || (ans.length() == 1 && !Character.isDigit(ans.charAt(0)))) {
-            return 0;
-        }
-
-        long result = 0;
-        try {
-            result = Long.parseLong(ans);
-        } catch (NumberFormatException e) {
-            result = sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-        }
-
-        if (result > Integer.MAX_VALUE) {
-            return Integer.MAX_VALUE;
-        } else if (result < Integer.MIN_VALUE) {
-            return Integer.MIN_VALUE;
-        }
-
-        return (int) result;
+        
+        return sign * result;
     }
 }
-
